@@ -32,6 +32,9 @@ DUAL ROLE OF SQL ->
 SELECT first_name 
 FROM people;
 
+SELECT 'first_name'
+FROM people; -- has different meaning
+
 SELECT first_name,last_name
 FROM people;
 
@@ -71,9 +74,64 @@ WHERE (state_code = 'CA' OR state_code = 'CO') AND shirt_or_hat = 'shirt';
 -- LIKE '%..'
 -- LIKE '..%'
 -- LIKE '%.%'
+-- LIKE '.%.'
 
 -- Q. show me all the records whose state_code starts with the letter 'C'
 SELECT *
 FROM people
 WHERE state_code LIKE 'C%';
+
+-- Q. look at the company names that end in 'LLC'
+SELECT *
+FROM people
+WHERE company LIKE '%LLC';
+
+-- LIMIT 
+
+SELECT *
+FROM people
+LIMIT 10;
+
+SELECT *
+FROM people
+LIMIT 10 OFFSET 5;  -- OFFSET skips first 5 records 
+
+-- ORDER BY field1, field2, ..
+SELECT first_name,last_name
+FROM people
+ORDER BY first_name;
+
+SELECT first_name,last_name
+FROM people
+ORDER BY first_name ASC; -- ASC is default
+
+SELECT first_name,last_name
+FROM people
+ORDER BY first_name DESC; 
+
+SELECT state_code, first_name,last_name
+FROM people
+ORDER BY state_code, first_name;
+
+SELECT quiz_points
+FROM people
+ORDER BY quiz_points DESC; -- DESC gives latest timestamp
+
+
+----
+SELECT first_name, LENGTH(first_name)
+FROM people;
+
+SELECT DISTINCT(first_name)
+FROM people
+ORDER BY first_name;
+
+-- Q. how many people from California
+SELECT COUNT(*)
+FROM people
+WHERE state_code = 'CA';
+
+SELECT COUNT(state_code)
+FROM people
+WHERE state_code = 'CA';
 
