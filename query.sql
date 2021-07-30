@@ -135,3 +135,134 @@ SELECT COUNT(state_code)
 FROM people
 WHERE state_code = 'CA';
 
+-- JOINs
+
+SELECT * 
+FROM people
+JOIN states;
+
+SELECT first_name, last_name, people.state_code, states.division 
+FROM people
+JOIN states
+ON people.state_code = states.state_abbrev;
+
+SELECT *
+FROM people
+JOIN states
+ON people.state_code = states.state_abbrev
+WHERE people.first_name LIKE 'J%' AND states.region = 'South';
+
+SELECT ppl.first_name, st.state_name 
+FROM people ppl, states st 
+WHERE ppl.state_code=st.state_abbrev;
+
+-- Q. give full states of the participants
+SELECT people.first_name, people.last_name, people.state_code, states.state_name 
+FROM states 
+LEFT JOIN people 
+ON people.state_code=states.state_abbrev; 
+-- gives NULL, since left join gives everything from left table 
+-- and makes null record if not found in the right table
+
+SELECT people.first_name, people.last_name, people.state_code, states.state_name 
+FROM people 
+LEFT JOIN states
+ON people.state_code=states.state_abbrev
+ORDER BY people.first_name;
+--OR
+SELECT people.first_name, people.last_name, people.state_code, states.state_name 
+FROM states 
+LEFT JOIN people 
+ON people.state_code=states.state_abbrev
+WHERE people.state_code IS NOT NULL
+ORDER BY people.first_name;
+
+-- Q. find states where participants are not present
+SELECT states.state_name 
+FROM states 
+LEFT JOIN people 
+ON people.state_code=states.state_abbrev
+WHERE people.state_code IS NULL;
+
+-- GROUP BY
+SELECT first_name, COUNT(first_name) 
+FROM people 
+GROUP BY first_name;
+
+-- Q. which 3 states have the most participants
+SELECT pl.state_code, st.state_name, COUNT(pl.state_code)
+FROM people pl
+LEFT JOIN states st
+ON pl.state_code=st.state_abbrev
+GROUP BY pl.state_code
+ORDER BY COUNT(pl.state_code) DESC
+LIMIT 3;
+
+-- Q. which 3 states have the least participants
+SELECT pl.state_code, st.state_name, COUNT(pl.state_code)
+FROM people pl
+LEFT JOIN states st
+ON pl.state_code=st.state_abbrev
+GROUP BY pl.state_code
+ORDER BY COUNT(pl.state_code) ASC
+LIMIT 3;
+
+-- Q. which states have no participants
+SELECT pl.state_code, st.state_name
+FROM states st
+LEFT JOIN people pl
+ON pl.state_code=st.state_abbrev
+WHERE pl.state_code IS NULL; 
+-- everything from states table and joining it to peoples table
+
+-- Q. How many states are there in which participants are present
+SELECT COUNT(DISTINCT(state_code)) as number_of_states
+FROM people;
+
+-- Q. give statewise overall score
+SELECT state_code, SUM(quiz_points) as total
+FROM people 
+GROUP BY state_code 
+ORDER BY total DESC;
+--OR
+SELECT pl.state_code, st.state_name, SUM(pl.quiz_points) as total
+FROM people pl
+LEFT JOIN states st
+ON pl.state_code=st.state_abbrev
+GROUP BY pl.state_code 
+ORDER BY total DESC;
+
+-- Q. give statewise average score
+
+SELECT pl.state_code, st.state_name, AVG(pl.quiz_points) as total
+FROM people pl
+LEFT JOIN states st
+ON pl.state_code=st.state_abbrev
+GROUP BY pl.state_code 
+ORDER BY total DESC;
+
+-- Q. give average total of states
+SELECT AVG(total) AS average 
+FROM (SELECT state_code, SUM(quiz_points) AS total 
+      FROM people GROUP BY state_code) A;
+	  
+-- Q. how many hats are needed for each states	  
+SELECT state_code, COUNT(shirt_or_hat)
+FROM people
+WHERE shirt_or_hat = 'hat'
+GROUP BY state_code
+ORDER BY COUNT(shirt_or_hat) DESC;
+
+SELECT pl.state_code, st.state_name, COUNT(shirt_or_hat)
+FROM people pl
+JOIN states st
+ON pl.state_code=st.state_abbrev
+WHERE pl.shirt_or_hat = 'hat'
+GROUP BY  st.state_name
+ORDER BY COUNT(pl.shirt_or_hat) DESC;
+
+-- Q. show how many members of each team are in each geographic division
+SELECT states.division, people.team, count(people.team) 
+FROM states
+JOIN people ON states.state_abbrev=people.state_code 
+GROUP BY states.division, people.team;
