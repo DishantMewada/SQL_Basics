@@ -375,7 +375,7 @@ FROM people; -- gives 18
 SELECT MIN(age) as second_minimum
 FROM people
 WHERE age NOT IN (SELECT MIN(age) as minimum
-				  FROM people)  -- gives 19;
+				  FROM people);  -- gives 19
 				   
 -- combining query
 SELECT first_name, last_name, age 
@@ -441,10 +441,6 @@ ON pl.state_code = st.state_abbrev
 GROUP BY pl.state_code
 ORDER BY average_score DESC;
  
-
-
-
-
 -- CASEs
 
 -- Q. report the total count of hats and shirts needed
@@ -467,5 +463,92 @@ SELECT shirt_or_hat, COUNT(shirt_or_hat) AS count
 FROM people 
 GROUP BY shirt_or_hat;
 
+-- INSERT INTO a table
+INSERT INTO people 
+(first_name) 
+VALUES 
+('Bob'); -- every other fields will be null since not provided
 
+INSERT INTO people 
+(first_name, last_name, state_code, city, shirt_or_hat)
+VALUES 
+('Mary', 'Hamilton', 'OR', 'Portland', 'hat');
+
+INSERT INTO people 
+(first_name, last_name) 
+VALUES 
+('George', 'White'), 
+('Jenn', 'Smith'), 
+('Carol', NULL);
+
+-- UPDATE a record in the table 
+/* UPDATE table 
+   SET field1 = value1, field2 = value2
+   WHERE condition;
+If you skip the where clause the update will apply to the entire table, BEWARE
+*/
+
+-- Q. Carlos Morrison entered his last_name incorrectly, update it
+-- UPDATE people SET last_name = 'Morrison' WHERE first_name='Carlos';
+-- is not proper since we can have many Carlos
+SELECT last_name FROM people WHERE first_name='Carlos';
+
+SELECT last_name 
+FROM people 
+WHERE first_name='Carlos' AND city='Houston';
+
+UPDATE people 
+SET last_name='Morrison' 
+WHERE first_name='Carlos' AND city='Houston';
+
+-- even better way is to use primary key like id_number
+SELECT * 
+FROM people 
+WHERE id_number=175;
+
+UPDATE people 
+SET last_name='Morrison' 
+WHERE id_number=175;
+
+-- fisher LLC is bought by megacorp inc
+SELECT * FROM people WHERE company='Fisher LLC';
+
+UPDATE people SET company='Megacorp Inc' WHERE company='Fisher LLC';
+
+SELECT * FROM people WHERE company='Megacorp Inc';
+
+-- DELETE record/s from the table
+
+-- DELETE FROM people;    --> BEWARE deletes all row from the table
+
+SELECT * from people;
+
+-- remove inserted records by INSERT INTO query - 'Bob'
+SELECT * FROM people WHERE id_number=1001;
+
+DELETE FROM people WHERE id_number=1001;
+
+-- Q. remove empty quiz points entries
+SELECT * FROM people WHERE quiz_points IS NULL;
+
+DELETE FROM people WHERE quiz_points IS NULL;
+
+--------------------------
+INSERT INTO people 
+(first_name, last_name, quiz_points, team, city, state_code, shirt_or_hat, signup) 
+VALUES 
+('St. John','Walter',93,'Baffled Badgers','Buffalo','NY','hat', '2021-01-29'),
+('Chou','Emerald',92,'Angry Ants','Topeka','KS','shirt','2021-01-29'); 
+
+SELECT * FROM people where first_name IN ('St. John','Chou') AND last_name IN ('Walter','Emerald')
+
+SELECT * FROM people WHERE first_name = 'Bonnie' AND last_name = 'Brooks';
+
+UPDATE people
+SET shirt_or_hat = 'shirt'
+WHERE first_name = 'Bonnie' AND last_name = 'Brooks';
+
+SELECT * FROM people WHERE first_name = 'Lois' AND last_name = 'Hart';
+
+DELETE FROM people WHERE first_name = 'Lois' AND last_name = 'Hart';
 
