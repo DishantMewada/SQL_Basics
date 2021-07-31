@@ -432,6 +432,18 @@ SELECT MAX(CAST(quiz_points AS CHAR)) FROM people; -- gives 99 since 9 is bigger
 SELECT MAX(CAST(quiz_points AS INT)) FROM people; -- gives 100
 
 
+-- Q. report max score and average score for each state
+
+SELECT st.state_name, MAX(quiz_points) AS max_score, ROUND(AVG(quiz_points),3) AS average_score 
+FROM people pl
+LEFT JOIN states st
+ON pl.state_code = st.state_abbrev
+GROUP BY pl.state_code
+ORDER BY average_score DESC;
+ 
+
+
+
 
 -- CASEs
 
