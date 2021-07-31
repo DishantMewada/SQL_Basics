@@ -529,7 +529,7 @@ SELECT * FROM people WHERE id_number=1001;
 DELETE FROM people WHERE id_number=1001;
 
 -- Q. remove empty quiz points entries
-SELECT * FROM people WHERE quiz_points IS NULL;
+SELECT * FROM people WHERE quiz_points IS NULL; -- dont use = NULL
 
 DELETE FROM people WHERE quiz_points IS NULL;
 
