@@ -366,9 +366,28 @@ SELECT first_name, last_name, age FROM people
 WHERE age >= (SELECT DISTINCT(MIN(age)) as youngest
 FROM people) ORDER BY age LIMIT 2;
 
--- Q. find the two youngest people whose age doesnt match
-SELECT MIN(age) FROM people
-WHERE age NOT IN (SELECT MIN(age) FROM people);
+-- Q. find the two youngest age group
+-- To find the minimum age 
+SELECT MIN(age) as minimum
+FROM people; -- gives 18
+
+-- To find the second minimum age
+SELECT MIN(age) as second_minimum
+FROM people
+WHERE age NOT IN (SELECT MIN(age) as minimum
+				  FROM people)  -- gives 19;
+				   
+-- combining query
+SELECT first_name, last_name, age 
+FROM people 
+WHERE age IN(SELECT MIN(age) AS second_minimum 
+             FROM people
+             WHERE age NOT IN (SELECT MIN(age) as minimum 
+			                   FROM people)) 
+				   OR
+      age IN(SELECT MIN(age) as minimum 
+	         FROM people) 
+	  ORDER BY age;
 
 -- Q. report top three members of each team
 SELECT team, quiz_points 
@@ -399,6 +418,18 @@ FROM people;
 SELECT REPLACE(first_name, 'a', '-') 
 FROM people;
 
+-- Q. CASTING a date to character
+SELECT quiz_points 
+FROM people 
+ORDER BY CAST(quiz_points AS CHAR); -- starts with 100
+
+SELECT quiz_points 
+FROM people 
+ORDER BY quiz_points; -- starts with 63
+
+SELECT MAX(CAST(quiz_points AS CHAR)) FROM people; -- gives 99 since 9 is bigger than 1 as a string
+
+SELECT MAX(CAST(quiz_points AS INT)) FROM people; -- gives 100
 
 
 
