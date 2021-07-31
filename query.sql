@@ -540,7 +540,8 @@ VALUES
 ('St. John','Walter',93,'Baffled Badgers','Buffalo','NY','hat', '2021-01-29'),
 ('Chou','Emerald',92,'Angry Ants','Topeka','KS','shirt','2021-01-29'); 
 
-SELECT * FROM people where first_name IN ('St. John','Chou') AND last_name IN ('Walter','Emerald')
+SELECT * FROM people where first_name IN ('St. John','Chou') AND last_name IN ('Walter','Emerald');
+
 
 SELECT * FROM people WHERE first_name = 'Bonnie' AND last_name = 'Brooks';
 
