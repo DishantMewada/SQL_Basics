@@ -266,3 +266,80 @@ SELECT states.division, people.team, count(people.team)
 FROM states
 JOIN people ON states.state_abbrev=people.state_code 
 GROUP BY states.division, people.team;
+
+/*
+SQL Data Types - 
+1. Binary types
+- store short binary sequences like 10010
+- store long binary sequences like files
+2. Date and time types
+- store a value that should be treated as date/time data 
+(like 2010-04-05 or 2010-04-07-17:35:00)
+3. Number types
+- store values as integers of various lengths, floating point numbers and so on
+4. Text types
+- store values intended to be used as text strings (usually VARCHAR)
+- fixed or variable numbers of characters
+5. Boolean types
+- stores a true or false value
+6. Null 
+- represents a field having no value in it whatsoever
+
+
+*/
+
+-- MATHs using sql 
+-- math is limited in sql, so its a good idea to handle it with application language than sql
+SELECT 4+2;
+SELECT 1/3; -- 0
+SELECT 1/3.0; -- 0.333333333333333
+SELECT 3>2; -- 1
+SELECT 3<2; -- 0
+SELECT 3=3; -- 1
+SELECT 4!=3; -- 1
+
+-- Q. find the participants with quiz score more than 70
+SELECT first_name, last_name, quiz_points
+FROM people
+WHERE quiz_points > 70
+ORDER BY first_name; -- doesnt include 70, use >= for that
+
+-- Q. find max and min score
+SELECT MAX(quiz_points), MIN(quiz_points)
+FROM people;
+
+-- Q. build a report of number of people in each team, total number of points earned and average of each team
+SELECT team, COUNT(*) as number_of_members, SUM(quiz_points) as points_totals, AVG(quiz_points) as average
+FROM people 
+GROUP BY team;
+
+-- SUBQUERY
+
+-- Q. find the participants with max quiz_points
+-- SELECT first_name, last_name, quiz_points 
+-- FROM people 
+-- WHERE quiz_points=MAX(quiz_points); -- improper where clause, same variable doesn't work on equality condition in sql
+
+-- first find the max quiz points
+SELECT MAX(quiz_points) 
+FROM people;
+-- and then pass it to the main query 
+SELECT first_name, last_name, quiz_points 
+FROM people 
+WHERE quiz_points=(SELECT MAX(quiz_points) 
+				   FROM people);
+			
+SELECT first_name, last_name, quiz_points 
+FROM people 
+WHERE EXISTS (SELECT MAX(quiz_points) 
+				   FROM people);
+				   
+SELECT p1.first_name, p1.last_name, MAX(p2.quiz_points)
+FROM people AS p1
+INNER JOIN people AS p2
+ON p1.id_number = p2.id_number;
+			
+-- Q. find all of the participants from minnesota when you dont know the state_code
+-- hint: states table have state_name and state_abbrev
+
+SELECT 
