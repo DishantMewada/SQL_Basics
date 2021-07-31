@@ -357,8 +357,9 @@ ON people.state_code = states.state_abbrev
 WHERE states.state_name = 'Minnesota';
 
 SELECT * FROM people
-WHERE state_code = (SELECT state_abbrev FROM states
-WHERE state_name = 'Minnesota');
+WHERE state_code = (SELECT state_abbrev 
+                    FROM states
+                    WHERE state_name = 'Minnesota');
 
 -- Q. find the two youngest people 
 SELECT first_name, last_name, age FROM people
@@ -377,6 +378,29 @@ SELECT team, quiz_points
                 ORDER BY quiz_points DESC ) AS Rank
         FROM people
         ) rs WHERE Rank <= 3;
+
+-- Transforming data 
+SELECT LOWER(first_name), UPPER(last_name) 
+FROM people;
+
+-- Q. give first 5 character of the last_name field
+SELECT LOWER(first_name), SUBSTR(last_name, 1, 5) 
+FROM people;
+
+-- Q.skip first 2 characters of the last_name field
+SELECT LOWER(first_name), SUBSTR(last_name, 3) 
+FROM people;
+
+-- Q.give last 2 characters of the last_name field
+SELECT LOWER(first_name), SUBSTR(last_name, -2) 
+FROM people;
+
+-- Q. replace 'a' to '-' in the first_name field
+SELECT REPLACE(first_name, 'a', '-') 
+FROM people;
+
+
+
 
 -- CASEs
 
