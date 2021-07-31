@@ -71,6 +71,25 @@ SELECT shirt_or_hat, state_code, first_name, last_name
 FROM people
 WHERE (state_code = 'CA' OR state_code = 'CO') AND shirt_or_hat = 'shirt';
 
+
+-- Q. report signup date from 01 to 15
+SELECT first_name, last_name, signup
+FROM people
+WHERE signup >= '2021-01-01' AND signup <= '2021-01-15';
+
+SELECT first_name, last_name, signup
+FROM people
+WHERE signup BETWEEN '2021-01-01' AND '2021-01-15';
+
+-- Q. report signup date 09
+
+SELECT first_name, last_name, signup
+FROM people
+WHERE signup LIKE '___%-__%-09%';
+
+-- Q. combine first_name.last_name and attach @gmail.com to it
+SELECT ( first_name|| '.' || last_name || '@gmail.com') as email_id FROM people;
+
 -- LIKE '%..'
 -- LIKE '..%'
 -- LIKE '%.%'
@@ -329,17 +348,57 @@ FROM people
 WHERE quiz_points=(SELECT MAX(quiz_points) 
 				   FROM people);
 			
-SELECT first_name, last_name, quiz_points 
-FROM people 
-WHERE EXISTS (SELECT MAX(quiz_points) 
-				   FROM people);
-				   
-SELECT p1.first_name, p1.last_name, MAX(p2.quiz_points)
-FROM people AS p1
-INNER JOIN people AS p2
-ON p1.id_number = p2.id_number;
-			
 -- Q. find all of the participants from minnesota when you dont know the state_code
 -- hint: states table have state_name and state_abbrev
 
+SELECT * FROM people
+INNER JOIN states
+ON people.state_code = states.state_abbrev
+WHERE states.state_name = 'Minnesota';
+
+SELECT * FROM people
+WHERE state_code = (SELECT state_abbrev FROM states
+WHERE state_name = 'Minnesota');
+
+-- Q. find the two youngest people 
+SELECT first_name, last_name, age FROM people
+WHERE age >= (SELECT DISTINCT(MIN(age)) as youngest
+FROM people) ORDER BY age LIMIT 2;
+
+-- Q. find the two youngest people whose age doesnt match
+SELECT MIN(age) FROM people
+WHERE age NOT IN (SELECT MIN(age) FROM people);
+
+-- Q. report top three members of each team
+SELECT team, quiz_points 
+    FROM (
+        SELECT team,quiz_points, Rank() 
+          over (Partition BY team
+                ORDER BY quiz_points DESC ) AS Rank
+        FROM people
+        ) rs WHERE Rank <= 3;
+
+-- CASEs
+
+-- Q. report the total count of hats and shirts needed
 SELECT 
+
+SUM(CASE 
+	WHEN shirt_or_hat = 'shirt' THEN 1
+	ELSE 0
+END) AS shirt_count,
+
+SUM(CASE 
+	WHEN shirt_or_hat = 'hat' THEN 1
+	ELSE 0
+END) AS hat_count
+
+FROM people; 
+
+--OR
+SELECT shirt_or_hat, COUNT(shirt_or_hat) AS count
+FROM people 
+GROUP BY shirt_or_hat;
+
+
+
